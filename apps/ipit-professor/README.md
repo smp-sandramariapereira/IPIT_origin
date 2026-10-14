@@ -1,5 +1,5 @@
 # IPIT Professor — aplicativo Android
-Versão 0.2.1: agente conversacional local com API opcional para o professor planejar e acompanhar uma aplicação do IPIT.
+Versão 0.2.2: agente conversacional local com API opcional para o professor planejar e acompanhar uma aplicação do IPIT.
 
 ## Recursos
 - Planejamento curricular salvo no dispositivo.
@@ -47,3 +47,6 @@ Conteúdo educacional CC BY 4.0 e código MIT conforme a LICENSE do IPIT_origin.
 
 ## Documento PDF
 Na área Dados, use Salvar PDF para escolher pasta/arquivo pelo seletor Android. Para WhatsApp, o aplicativo abre a tela de compartilhamento; o professor escolhe contato e confirma. Se WhatsApp e WhatsApp Business estiverem ausentes, abre o seletor de outros aplicativos. Nenhum envio é automático. Não é necessário conceder acesso amplo ao armazenamento.
+
+## Escolha na entrada
+Ao abrir, o professor escolhe Agente local, Configurar API e conversar ou Planejar e acompanhar. O modo local não exige internet; API só é ativada depois de configuração e consentimento. O botão Início permite voltar à escolha sem apagar registros.

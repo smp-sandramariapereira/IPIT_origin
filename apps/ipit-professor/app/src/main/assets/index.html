@@ -1,8 +1,18 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'"><title>IPIT Professor</title><link rel="stylesheet" href="styles.css"><script src="core.js" defer></script><script src="app.js" defer></script></head>
 <body><header><p class="eyebrow">📚 Apoio à prática docente · local ou API</p><h1>IPIT Professor</h1><p>Planeje, conduza e observe a aprendizagem.</p></header>
-<nav aria-label="Áreas do aplicativo"><button data-tab="plano" aria-pressed="true">📒 Plano</button><button data-tab="aula" aria-pressed="false">🧭 Aula</button><button data-tab="tutor" aria-pressed="false">💬 Orientação</button><button data-tab="avaliar" aria-pressed="false">🌟 Avaliação</button><button data-tab="dados" aria-pressed="false">⚙️ Dados</button></nav>
+<nav aria-label="Áreas do aplicativo"><button data-tab="inicio" aria-pressed="true">🏠 Início</button><button data-tab="plano" aria-pressed="false">📒 Plano</button><button data-tab="aula" aria-pressed="false">🧭 Aula</button><button data-tab="tutor" aria-pressed="false">💬 Agente</button><button data-tab="avaliar" aria-pressed="false">🌟 Avaliação</button><button data-tab="dados" aria-pressed="false">⚙️ Dados</button></nav>
 <main>
-<section id="plano"><h2>Seu planejamento</h2><p>Um plano por dispositivo. Exporte antes de começar outro. Evite nomes e dados pessoais de estudantes.</p>
+<section id="inicio" aria-labelledby="inicio-title">
+<h2 id="inicio-title">Como você quer começar?</h2>
+<p>Escolha o apoio para sua aula. Você pode mudar de área a qualquer momento pelo menu.</p>
+<div class="entry-options">
+<article><h3>📱 Conversar no modo local</h3><p>Pergunte sobre planejamento, protótipos, testes, avaliação e uso responsável de IA. Respostas por regras do IPIT, no dispositivo, sem internet ou chave.</p><button id="start-local">Abrir agente local</button></article>
+<article><h3>🔌 Conversar com uma API</h3><p>Amplie exemplos e adaptações com um modelo de IA. Requer internet, modelo e chave próprios. Você revisa os dados e autoriza o envio ao provedor.</p><button id="start-api">Configurar API e conversar</button></article>
+<article><h3>📒 Planejar e acompanhar</h3><p>Preencha seu plano, conduza as etapas, registre evidências e prepare avaliação e PDF. Não exige API.</p><button id="start-plan">Abrir planejamento</button></article>
+</div>
+<p>O agente apoia o professor. A revisão pedagógica e a avaliação continuam sob sua responsabilidade.</p>
+</section>
+<section id="plano" hidden><h2>Seu planejamento</h2><p>Um plano por dispositivo. Exporte antes de começar outro. Evite nomes e dados pessoais de estudantes.</p>
 <form id="plan-form">
 <label>Objetivo curricular<textarea name="objective" maxlength="4000" required placeholder="Ao final, estudantes serão capazes de…"></textarea></label>
 <label>Componente curricular<input name="subject" maxlength="4000"></label><label>Código da turma<input name="group" maxlength="4000" placeholder="Ex.: T1 — sem nomes"></label>
@@ -39,4 +49,4 @@
 <button id="erase" class="danger">Excluir todos os registros</button>
 <details><summary>Privacidade e limites</summary><p>Use códigos de turma e equipe. Não insira nomes, contatos, imagens, senhas ou informações sensíveis. O armazenamento local não é criptografia adicional e pode ser acessado por quem tiver acesso ao dispositivo. Exportar compartilha dados com o aplicativo escolhido; revise o texto e seus destinatários. Desinstalar pode remover os registros. Backup automático do Android está desativado.</p><p>IA generativa é opcional por API própria no Android. Não há certificação, sincronização ou cobrança pelo aplicativo; o provedor da API pode cobrar.</p></details>
 <p><a href="https://github.com/smp-sandramariapereira/IPIT-IdeathonPedagogicoInovacaoTecnologica">Materiais públicos do IPIT</a></p></section>
-</main><p id="status" role="status" aria-live="polite"></p><footer>IPIT · Sandra Maria Pereira · 0.2.1<br>Conteúdo CC BY 4.0 · Código MIT</footer></body></html>
+</main><p id="status" role="status" aria-live="polite"></p><footer>IPIT · Sandra Maria Pereira · 0.2.2<br>Conteúdo CC BY 4.0 · Código MIT</footer></body></html>

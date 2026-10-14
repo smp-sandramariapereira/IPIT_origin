@@ -8,7 +8,7 @@ function save(){try{const raw=JSON.stringify(state);if(bridge){if(!bridge.save(r
 function el(tag,text){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;}
 function showTab(id){document.querySelectorAll("main>section").forEach(s=>s.hidden=s.id!==id);document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tab===id)));window.scrollTo(0,0);}
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
-window.ipitBack=()=>{if(!document.querySelector("#plano").hidden)return false;showTab("plano");return true;};
+window.ipitBack=()=>{if(!document.querySelector("#inicio").hidden)return false;showTab("inicio");return true;};
 const planForm=document.querySelector("#plan-form");
 function fillPlan(){for(const field of api.fields)planForm.elements[field].value=state.plan[field];}
 function capturePlan(){for(const field of api.fields)state.plan[field]=planForm.elements[field].value.slice(0,4000);}
@@ -87,3 +87,18 @@ document.querySelector("#share-pdf").addEventListener("click",()=>{
  if(bridge?.exportPdf){bridge.exportPdf(pdfReport(),false);inform("Escolha o aplicativo para compartilhar o PDF.");}
  else inform("O compartilhamento de PDF está disponível no aplicativo Android.");
 });
+
+document.querySelector("#start-local").addEventListener("click",()=>{
+ resetRemote();showTab("tutor");
+ const settings=document.querySelector("#api-form").closest("details");settings.open=false;
+ bubble("assistant","Olá! Sou o agente IPIT Professor no modo local. Sobre qual ponto quer conversar: planejamento, investigação, tecnologia, IA ou avaliação?");
+ document.querySelector("#chat-input").focus();
+});
+document.querySelector("#start-api").addEventListener("click",()=>{
+ showTab("tutor");
+ const settings=document.querySelector("#api-form").closest("details");settings.open=true;
+ if(bridge?.configureApi){document.querySelector("#api-model").focus();inform("Escolha provedor, modelo e informe sua chave. Revise e autorize o envio.");}
+ else inform("A opção por API funciona no aplicativo Android; nesta demonstração, use o modo local.");
+});
+document.querySelector("#start-plan").addEventListener("click",()=>{showTab("plano");planForm.elements.objective.focus();});
+showTab("inicio");

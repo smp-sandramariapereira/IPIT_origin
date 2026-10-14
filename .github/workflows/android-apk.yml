@@ -1,0 +1,44 @@
+name: Gerar APK IPIT Professor
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/ipit-professor/**'
+      - '.github/workflows/android-apk.yml'
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/ipit-professor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Preparar SDK
+        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Testar regras do agente
+        run: node --test test/core.test.cjs
+      - name: Compilar APK de teste
+        run: gradle --no-daemon assembleDebug
+      - name: Preparar download
+        run: |
+          mkdir -p apk
+          cp app/build/outputs/apk/debug/app-debug.apk apk/IPIT-Professor-0.2.1.apk
+          sha256sum apk/IPIT-Professor-0.2.1.apk > apk/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IPIT-Professor-APK
+          path: apps/ipit-professor/apk/
+          if-no-files-found: error
+          retention-days: 30

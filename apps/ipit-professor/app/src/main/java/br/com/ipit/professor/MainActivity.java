@@ -14,6 +14,8 @@ import java.util.*;
 public class MainActivity extends Activity {
  private WebView web;
  private SharedPreferences prefs;
+ private final TeacherApi teacherApi=new TeacherApi();
+ private volatile boolean destroyed=false;
  private static final String HOST = "appassets.androidplatform.net";
  private static final Set<String> ASSETS = new HashSet<>(Arrays.asList("index.html","styles.css","core.js","app.js"));
  @Override public void onCreate(Bundle state) {
@@ -39,6 +41,15 @@ public class MainActivity extends Activity {
   settings.setAllowContentAccess(false);
   settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
   WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+  web.setWebChromeClient(new WebChromeClient() {
+   @Override public boolean onJsConfirm(WebView view,String url,String message,JsResult result){
+    new android.app.AlertDialog.Builder(MainActivity.this).setMessage(message)
+     .setPositiveButton("Confirmar",(dialog,which)->result.confirm())
+     .setNegativeButton("Cancelar",(dialog,which)->result.cancel())
+     .setOnCancelListener(dialog->result.cancel()).show();
+    return true;
+   }
+  });
   web.addJavascriptInterface(new LocalStore(), "IPITAndroid");
   web.setWebViewClient(new WebViewClient() {
    @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -67,6 +78,17 @@ public class MainActivity extends Activity {
   web.loadUrl("https://"+HOST+"/assets/index.html");
  }
  public class LocalStore {
+  @JavascriptInterface public String configureApi(String endpoint,String model,String key){return teacherApi.configure(endpoint,model,key);}
+  @JavascriptInterface public void disconnectApi(){teacherApi.disconnect();}
+  @JavascriptInterface public void chatApi(String id,String history,String context){
+   if(id==null || !id.matches("[0-9]+-[0-9]+"))return;
+   teacherApi.chat(history,context,(text,error)->runOnUiThread(()->{
+    if(destroyed)return;
+    String callback="window.ipitApiResult && window.ipitApiResult("+org.json.JSONObject.quote(id)+","+
+      (text==null?"null":org.json.JSONObject.quote(text))+","+(error==null?"null":org.json.JSONObject.quote(error))+")";
+    web.evaluateJavascript(callback.replace("\\u2028"," ").replace("\\u2029"," "),null);
+   }));
+  }
   @JavascriptInterface public String load() { return prefs.getString("plan",""); }
   @JavascriptInterface public boolean save(String json) {
    if (json==null || json.length()>200000) return false;
@@ -87,5 +109,5 @@ public class MainActivity extends Activity {
    if (!"true".equals(value)) MainActivity.super.onBackPressed();
   });
  }
- @Override protected void onDestroy() { web.removeJavascriptInterface("IPITAndroid"); web.destroy(); super.onDestroy(); }
+ @Override protected void onDestroy() { destroyed=true;teacherApi.disconnect();web.removeJavascriptInterface("IPITAndroid"); web.destroy(); super.onDestroy(); }
 }

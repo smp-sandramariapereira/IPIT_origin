@@ -1,12 +1,14 @@
 # IPIT Professor — aplicativo Android
-Primeira versão funcional offline para o professor planejar e acompanhar uma aplicação do IPIT.
+Versão 0.2.0: agente conversacional local com API opcional para o professor planejar e acompanhar uma aplicação do IPIT.
 
 ## Recursos
 - Planejamento curricular salvo no dispositivo.
 - Percurso introdutório em cinco momentos e consulta ao percurso técnico sistematizado em oito etapas.
 - Checklist de condução e registros de evidência por etapa.
 - Rubrica breve por equipe identificada por código.
-- Orientação conversacional **guiada por regras**, com perguntas contextualizadas. Não é IA generativa.
+- Mensagens livres para o agente, com respostas locais por regras restritas ao IPIT; fora do contexto, orienta reformular.
+- Conexão opcional, somente no Android, a API compatível com Chat Completions. Modelo e chave próprios; sem chave no código ou backup.
+- Contexto do planejamento e últimas seis mensagens são enviados ao provedor apenas após ativação consentida.
 - Exportação/compartilhamento e restauração de backup em JSON.
 - Exclusão local e aviso de privacidade.
 - Interface adaptada a celular e tablet.
@@ -34,7 +36,9 @@ Modelo consultado: [luma-tutor-solana-dev](https://github.com/smp-sandramariaper
 Implementação independente: não copia código, imagens, marcas ou prompt do Luma, cujo README informa licença ainda não formalizada.
 
 ## Limites da entrega
-O projeto Android não foi compilado neste ambiente por ausência de SDK e Gradle. A interface e regras têm testes locais. Não há APK/AAB assinado, publicação na loja, servidor de IA, login, cobrança ou sincronização.
+O projeto Android não foi compilado neste ambiente por ausência de SDK e Gradle. A interface e regras têm testes locais. Não há APK/AAB assinado, publicação na loja, backend próprio, login, cobrança ou sincronização. A conexão de API nativa foi implementada, mas não testada em Android nem com provedor real neste ambiente.
+No modo local, as respostas são limitadas a orientações documentadas por regras. API amplia exemplos e adaptações dentro do IPIT; instruções de escopo não garantem contenção absoluta do modelo.
+
 Leia [publicação](docs/GOOGLE-PLAY.md), [privacidade](docs/PRIVACIDADE.md) e [evolução de IA](docs/IA.md).
 
 Conteúdo educacional CC BY 4.0 e código MIT conforme a LICENSE do IPIT_origin. Autora: Sandra Maria Pereira.

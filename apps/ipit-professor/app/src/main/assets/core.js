@@ -28,6 +28,31 @@ function guide(state,stageId,kind){
 function report(state){
  return "IPIT Professor — plano e evidências\n"+fields.map(k=>k+": "+state.plan[k]).join("\n")+"\n\n"+stages.map(s=>s.title+" — "+(state.records[s.id].done?"concluído":"em andamento")+"\n"+state.records[s.id].note).join("\n\n")+"\n\nAvaliação\n"+state.evaluations.map(x=>x.code+"\n"+criteria.map((c,i)=>c+": "+x.levels[i]).join("\n")+"\nFeedback: "+x.note).join("\n\n")+"\n\nAutora da metodologia: Sandra Maria Pereira. Registros requerem revisão docente.";
 }
-const api={fields,stages,criteria,blank,clean,guide,report};
+
+function classify(message){
+ const q=String(message).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ if(/^(oi|ola|bom dia|boa tarde|boa noite)[!?. ]*$/.test(q))return "saudacao";
+ if(/(certific|avali|rubrica|feedback|evidencia|reflex)/.test(q))return "avaliacao";
+ if(/(inteligencia artificial|\bia\b|prompt|autoria|privacidade|dados pessoais)/.test(q))return "ia";
+ if(/(tecnolog|comput|protot|program|planilha|codigo)/.test(q))return "tecnologia";
+ if(/(planej|objetivo|curricul|tempo|cronograma|recurso|inclus|acessib|aula|atividade|trilha)/.test(q))return "plano";
+ if(/(ipit|ideathon|investig|idear|ideacao|testar|teste|colabora|equipe|mediar|mediacao)/.test(q))return "percurso";
+ return "fora";
+}
+function localReply(state,stageId,message){
+ const topic=classify(message);
+ const replies={
+ saudacao:"Olá! Sou o agente IPIT Professor em modo local. Posso orientar planejamento, investigação, protótipo, teste, avaliação e uso responsável de IA. Qual desses pontos quer trabalhar?",
+ plano:"Planeje a partir de um objetivo observável, desafio investigável, recursos, tempo e evidências. O roteiro de referência tem 240 minutos com intervalo e transições. Se o seu tempo for menor, distribua em aulas e preserve teste e reflexão.",
+ avaliacao:"Use os quatro critérios: compreensão do problema; coerência da solução e decisão tecnológica; teste e melhoria; colaboração e comunicação. Distinga não observado de desempenho inicial. A decisão de avaliação é docente; o agente não certifica competência.",
+ ia:"Defina a finalidade do uso de IA. Verifique informações em fontes e código por leitura e testes. Registre ferramenta, instrução, verificação e alterações humanas. Não envie dados pessoais de estudantes ou segredos.",
+ tecnologia:"Escolha tecnologia pelo requisito do problema, comparando uma alternativa mais simples. Para primeira aplicação, use papel, slides, planilha ou programação conhecida. Explique entrada, regra e saída; não prometa software completo em quatro horas.",
+ percurso:guide(state,stageId,"orientar"),
+ fora:"Minha orientação é restrita ao contexto do IPIT. Não tenho uma resposta local documentada para essa pergunta. Escolha planejamento, percurso, tecnologia, IA ou avaliação, ou reformule vinculando sua dúvida à aplicação em aula."
+ };
+ return replies[topic]+(topic==="percurso"||topic==="fora"||topic==="saudacao"?"":"\n\n"+(state.plan.objective?"Seu objetivo: "+state.plan.objective+".\n":"")+(stages.find(s=>s.id===stageId)||stages[0]).question);
+}
+function contextForApi(state,stageId){return JSON.stringify({objetivo:state.plan.objective,componente:state.plan.subject,desafio:state.plan.challenge,recursos:state.plan.resources,tempo:state.plan.duration,apoios:state.plan.supports,tecnologia:state.plan.technology,usoIA:state.plan.aiUse,momento:stageId});}
+const api={fields,stages,criteria,blank,clean,guide,report,classify,localReply,contextForApi};
 if(typeof module!=="undefined"&&module.exports)module.exports=api;else root.IPIT=api;
 })(typeof globalThis!=="undefined"?globalThis:this);

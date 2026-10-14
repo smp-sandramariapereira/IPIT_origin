@@ -1,7 +1,7 @@
-# Privacidade da versão 0.1.0
-O aplicativo destina-se a professores. Não exige conta e não coleta dados para servidor, analytics ou anúncios. O pacote Android não solicita permissão de internet.
+# Privacidade da versão 0.2.0
+O aplicativo destina-se a professores. Não exige conta, analytics ou anúncios. No modo local não envia dados para servidor. O pacote solicita permissão de internet para a API opcional ativada pelo professor.
 Plano, evidências e avaliação são gravados em SharedPreferences no armazenamento privado do aplicativo. A conversa guiada permanece apenas na interface e é descartada ao fechar. No navegador de teste, os registros ficam em localStorage.
 Não há criptografia adicional; proteja o dispositivo. Use somente códigos, sem dados pessoais de estudantes. Android backup automático desativado.
 Exportação é ação explícita: o professor escolhe o aplicativo de compartilhamento, que passa a tratar o conteúdo conforme suas próprias condições. Links externos abrem no navegador.
 O botão Excluir apaga os registros locais. Cópias exportadas devem ser excluídas separadamente. Desinstalação remove o armazenamento do aplicativo.
-Este texto descreve o protótipo; antes de publicar, a responsável precisa informar identidade e canal de contato reais e hospedar a política pública. Se IA, login ou sincronização forem adicionados, a política e as declarações de dados devem ser revistas antes da atualização.
+Este texto descreve o protótipo; antes de publicar, a responsável precisa informar identidade e canal de contato reais e hospedar a política pública. Com API ativada e consentida, o contexto do planejamento e até seis mensagens são enviados ao provedor selecionado. A chave fica apenas em memória nativa durante a sessão e é descartada ao desconectar ou encerrar a Activity; ela não é exportada. O provedor pode processar, reter e cobrar conforme seus termos. Não insira dados pessoais ou sensíveis no plano nem na conversa. A configuração não é enviada a servidor do IPIT. A política pública e as declarações de segurança de dados precisam refletir esse envio opcional antes da publicação.

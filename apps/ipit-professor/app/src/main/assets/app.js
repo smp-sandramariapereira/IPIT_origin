@@ -37,3 +37,39 @@ document.querySelector("#share-backup").addEventListener("click",()=>{capturePla
 document.querySelector("#restore").addEventListener("click",()=>{try{const candidate=api.clean(JSON.parse(document.querySelector("#import-text").value));if(!confirm("Substituir os registros atuais pelo backup? Exporte antes se precisar preservá-los."))return;state=candidate;save();fillPlan();renderStages();renderEvaluations();document.querySelector("#import-text").value="";}catch(e){inform("Backup inválido: "+e.message);}});
 document.querySelector("#erase").addEventListener("click",()=>{if(!confirm("Excluir plano, evidências e avaliações deste dispositivo?"))return;try{if(bridge){if(!bridge.erase())throw Error();}else localStorage.removeItem(key);state=api.blank();fillPlan();renderStages();renderEvaluations();document.querySelector("#conversation").replaceChildren();document.querySelector("#import-text").value="";inform("Todos os registros locais foram excluídos.");}catch(e){inform("Não foi possível excluir os registros.");}});
 fillPlan();renderStages();renderEvaluations();
+
+let remote=false,history=[],pending=null,epoch=0;
+const mode=document.querySelector("#agent-mode"),sendButton=document.querySelector("#send-chat");
+function bubble(role,text){const node=el("div",(role==="user"?"Você: ":"Agente: ")+text);node.className="message";document.querySelector("#conversation").append(node);node.scrollIntoView?.({block:"nearest"});}
+function resetRemote(){epoch++;remote=false;pending=null;history=[];sendButton.disabled=false;bridge?.disconnectApi?.();document.querySelector("#api-key").value="";mode.textContent="Modo local: orientação por regras do IPIT, no dispositivo, sem envio externo."; }
+document.querySelector("#api-form").addEventListener("submit",e=>{
+ e.preventDefault();if(!bridge?.configureApi){inform("A conexão por API está disponível somente no aplicativo Android.");return;}
+ if(!document.querySelector("#api-consent").checked)return;
+ const endpoint=document.querySelector("#api-endpoint").value,model=document.querySelector("#api-model").value.trim(),secret=document.querySelector("#api-key").value.trim();
+ const result=JSON.parse(bridge.configureApi(endpoint,model,secret));document.querySelector("#api-key").value="";
+ if(!result.ok){inform(result.error||"Configuração inválida.");return;}
+ epoch++;remote=true;pending=null;history=[];sendButton.disabled=false;
+ mode.textContent="API configurada nesta sessão: "+model+". A conexão será testada na primeira mensagem. Perguntas e contexto do plano serão enviados ao provedor.";
+ inform("Chave removida do formulário e mantida apenas na memória nativa.");
+});
+document.querySelector("#disconnect-api").addEventListener("click",resetRemote);
+document.querySelector("#chat-form").addEventListener("submit",e=>{
+ e.preventDefault();if(pending)return;capturePlan();
+ const input=document.querySelector("#chat-input"),message=input.value.trim();if(!message)return;
+ const topic=api.classify(message);bubble("user",message);input.value="";
+ if(!remote||topic==="fora"){bubble("assistant",api.localReply(state,guideSelect.value,message));return;}
+ const id=String(epoch)+"-"+Date.now();pending=id;sendButton.disabled=true;
+ history.push({role:"user",content:message});history=history.slice(-6);
+ bridge.chatApi(id,JSON.stringify(history),api.contextForApi(state,guideSelect.value));
+ inform("Consultando o provedor. Aguarde até 45 segundos.");
+});
+window.ipitApiResult=(id,text,error)=>{
+ if(id!==pending)return;pending=null;sendButton.disabled=false;
+ if(error){if(history.at(-1)?.role==="user")history.pop();bubble("assistant",error+" Você pode desconectar e continuar no modo local.");inform("A consulta não foi concluída.");return;}
+ history.push({role:"assistant",content:text});history=history.slice(-6);
+ bubble("assistant",text+"\n\nSugestão de IA: revise fatos, fontes, código e adequação pedagógica antes de usar.");
+ inform("Resposta recebida. Revise antes de incorporar.");
+};
+if(!bridge?.configureApi){document.querySelector("#api-form").querySelectorAll("input,select,button").forEach(x=>x.disabled=true);}
+document.querySelector("#clear-chat").addEventListener("click",()=>{history=[];epoch++;pending=null;sendButton.disabled=false;});
+document.querySelector("#erase").addEventListener("click",()=>{if(status.textContent==="Todos os registros locais foram excluídos.")resetRemote();});

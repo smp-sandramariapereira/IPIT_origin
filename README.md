@@ -4,6 +4,10 @@ Metodologia educacional criada por **Sandra Maria Pereira** para orientar profes
 
 O IPIT integra investigação, aprendizagem baseada em projetos, Design Thinking, cultura maker, metodologias ágeis, documentação no GitHub, prototipagem e uso responsável de Inteligência Artificial. O foco não está apenas no produto final: cada etapa produz decisões, entregáveis e evidências de aprendizagem.
 
+## Aplicativo docente em desenvolvimento
+
+O [IPIT Professor](apps/ipit-professor/README.md) contém um projeto Android offline para planejamento, roteiro, registros e avaliação. Usa o Luma como referência de abordagem, com implementação independente. É um protótipo: ainda precisa de compilação e testes Android antes de publicação na Google Play. A orientação atual é guiada por regras, sem IA generativa conectada.
+
 ## Aplique em 4 horas
 
 Para uma primeira experiência, realize um **Micro-Ideathon** em um turno:

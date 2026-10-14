@@ -1,0 +1,7 @@
+const test=require("node:test"),assert=require("node:assert/strict"),api=require("../app/src/main/assets/core.js");
+test("backup preserva plano, evidências e avaliação",()=>{const x=api.blank();x.plan.objective="Explicar condições";x.records.testar={done:true,note:"Corrigiu saída"};x.evaluations=[{code:"E1",levels:Array(4).fill("Consistente"),note:"Evidência"}];assert.deepEqual(api.clean(JSON.parse(JSON.stringify(x))),x);});
+test("rejeita backup desconhecido sem alterar estado",()=>{assert.throws(()=>api.clean({version:2}));assert.throws(()=>api.clean(null));});
+test("limita campos importados e normaliza níveis",()=>{const x=api.blank();x.plan.objective="a".repeat(5000);x.evaluations=[{code:"E1",levels:["nota 10"],note:"n"}];const y=api.clean(x);assert.equal(y.plan.objective.length,4000);assert.equal(y.evaluations[0].levels[0],"Não observado");});
+test("roteiro soma 240 com abertura pausa e transições",()=>assert.equal(api.stages.reduce((n,s)=>n+s.minutes,0)+45,240));
+test("orientação usa objetivo e pergunta sem alegar análise IA",()=>{const x=api.blank();x.plan.objective="Modelar dados";const reply=api.guide(x,"testar","evidencia");assert.match(reply,/Modelar dados/);assert.match(reply,/Pergunta para continuar/);assert.match(reply,/alteração humana/);});
+test("relatório contém registros e limites",()=>{const x=api.blank();x.records.investigar.note="Observação fictícia";assert.match(api.report(x),/Observação fictícia/);assert.match(api.report(x),/revisão docente/);});

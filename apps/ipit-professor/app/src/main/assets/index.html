@@ -1,0 +1,31 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'"><title>IPIT Professor</title><link rel="stylesheet" href="styles.css"><script src="core.js" defer></script><script src="app.js" defer></script></head>
+<body><header><p class="eyebrow">📚 Apoio à prática docente · offline</p><h1>IPIT Professor</h1><p>Planeje, conduza e observe a aprendizagem.</p></header>
+<nav aria-label="Áreas do aplicativo"><button data-tab="plano" aria-pressed="true">📒 Plano</button><button data-tab="aula" aria-pressed="false">🧭 Aula</button><button data-tab="tutor" aria-pressed="false">💬 Orientação</button><button data-tab="avaliar" aria-pressed="false">🌟 Avaliação</button><button data-tab="dados" aria-pressed="false">⚙️ Dados</button></nav>
+<main>
+<section id="plano"><h2>Seu planejamento</h2><p>Um plano por dispositivo. Exporte antes de começar outro. Evite nomes e dados pessoais de estudantes.</p>
+<form id="plan-form">
+<label>Objetivo curricular<textarea name="objective" maxlength="4000" required placeholder="Ao final, estudantes serão capazes de…"></textarea></label>
+<label>Componente curricular<input name="subject" maxlength="4000"></label><label>Código da turma<input name="group" maxlength="4000" placeholder="Ex.: T1 — sem nomes"></label>
+<label>Desafio real<textarea name="challenge" maxlength="4000" placeholder="Descreva o problema sem antecipar a solução"></textarea></label>
+<label>Recursos disponíveis<textarea name="resources" maxlength="4000"></textarea></label>
+<label>Tempo disponível em minutos<input name="duration" type="number" min="30" max="10000" value="240"></label>
+<label>Apoios de participação e acessibilidade<textarea name="supports" maxlength="4000"></textarea></label>
+<label>Decisão tecnológica e justificativa<textarea name="technology" maxlength="4000" placeholder="Recurso escolhido, requisito atendido e alternativa mais simples"></textarea></label>
+<label>Uso de IA e verificação<textarea name="aiUse" maxlength="4000" placeholder="Opcional: ferramenta, finalidade, fontes ou testes e alterações humanas"></textarea></label>
+<button type="submit">💾 Salvar plano</button></form></section>
+<section id="aula" hidden><h2>Roteiro da aula</h2><p>Referência: 240 minutos. Abertura 15, intervalo 15 e transições 15, além dos cinco momentos. Para mais de seis equipes, adapte apresentações ou amplie o tempo.</p>
+<label for="progress">Etapas marcadas pela professora ou professor — não mede aprendizagem</label><progress id="progress" max="5" value="0"></progress><p id="progress-label"></p><div id="stage-list"></div>
+<details><summary>Percurso técnico completo</summary><p>Descoberta; Ideação; Solução; Tecnologia; MVP; Arquitetura; Desenvolvimento; Pitch e finalização. Esse percurso exige formação técnica e tempo adicional.</p><p>No artigo histórico, os momentos 5 e 6 são Planejamento técnico e Protótipo. A sistematização posterior reorganiza escopo e planejamento. Esta versão de cinco momentos é introdutória.</p></details></section>
+<section id="tutor" hidden><h2>Orientação guiada</h2><p class="notice">Respostas locais por regras pedagógicas. Este recurso não é IA generativa e não analisa automaticamente seus registros.</p>
+<label>Momento<select id="guide-stage"></select></label><div id="conversation" role="log" aria-live="polite"></div>
+<div class="choices"><button data-guide="orientar">Como conduzir?</button><button data-guide="exemplo">Ver um exemplo</button><button data-guide="dificuldade">Enfrentar dificuldade</button><button data-guide="evidencia">O que registrar?</button></div><button id="clear-chat" class="secondary">Limpar orientação</button></section>
+<section id="avaliar" hidden><h2>Avaliação por evidências</h2><p>Três níveis e “não observado”. A avaliação é docente; complete com observação e reflexão individual. Não atribua o mesmo julgamento a todos automaticamente.</p><details><summary>Descritores da rubrica breve</summary><div id="rubric"></div></details>
+<form id="evaluation-form"><label>Código da equipe<input name="code" required maxlength="80" placeholder="E1 — sem nomes"></label><div id="criteria-inputs"></div><label>Evidência e próxima ação<textarea name="note" maxlength="4000" required></textarea></label><button type="submit">Registrar avaliação</button></form><div id="evaluations"></div>
+<p>Reflexão individual: O que aprendi? Qual decisão ajudei a tomar? O que melhoraríamos e como testaríamos?</p></section>
+<section id="dados" hidden><h2>Seus registros</h2><p>O plano, as evidências e avaliações ficam neste dispositivo. Não há conta, envio para servidor, anúncios ou telemetria. A conversa guiada é temporária.</p>
+<div class="choices"><button id="share-report">Compartilhar relatório</button><button id="share-backup">Exportar backup JSON</button></div>
+<label>Restaurar backup<textarea id="import-text" maxlength="200000" placeholder="Cole aqui o JSON exportado"></textarea></label><button id="restore" class="secondary">Restaurar após confirmação</button>
+<button id="erase" class="danger">Excluir todos os registros</button>
+<details><summary>Privacidade e limites</summary><p>Use códigos de turma e equipe. Não insira nomes, contatos, imagens, senhas ou informações sensíveis. O armazenamento local não é criptografia adicional e pode ser acessado por quem tiver acesso ao dispositivo. Exportar compartilha dados com o aplicativo escolhido; revise o texto e seus destinatários. Desinstalar pode remover os registros. Backup automático do Android está desativado.</p><p>IA, certificação, sincronização e cobrança não estão disponíveis nesta versão.</p></details>
+<p><a href="https://github.com/smp-sandramariapereira/IPIT-IdeathonPedagogicoInovacaoTecnologica">Materiais públicos do IPIT</a></p></section>
+</main><p id="status" role="status" aria-live="polite"></p><footer>IPIT · Sandra Maria Pereira · 0.1.0<br>Conteúdo CC BY 4.0 · Código MIT</footer></body></html>

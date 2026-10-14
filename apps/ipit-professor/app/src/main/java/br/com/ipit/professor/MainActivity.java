@@ -16,10 +16,13 @@ public class MainActivity extends Activity {
  private SharedPreferences prefs;
  private final TeacherApi teacherApi=new TeacherApi();
  private volatile boolean destroyed=false;
+ private String pendingPdf;
+ private static final int SAVE_PDF=410;
  private static final String HOST = "appassets.androidplatform.net";
  private static final Set<String> ASSETS = new HashSet<>(Arrays.asList("index.html","styles.css","core.js","app.js"));
  @Override public void onCreate(Bundle state) {
   super.onCreate(state);
+  if(state!=null)pendingPdf=state.getString("pendingPdf");
   prefs = getSharedPreferences("ipit", MODE_PRIVATE);
   web = new WebView(this);
   web.setBackgroundColor(0xfffffdf8);
@@ -78,6 +81,38 @@ public class MainActivity extends Activity {
   web.loadUrl("https://"+HOST+"/assets/index.html");
  }
  public class LocalStore {
+  @JavascriptInterface public void exportPdf(String report,boolean whatsapp){
+   if(report==null || report.length()>200000)return;
+   runOnUiThread(()->{
+    try{
+     File file=PdfExporter.create(MainActivity.this,report);
+     Uri uri=androidx.core.content.FileProvider.getUriForFile(MainActivity.this,getPackageName()+".pdf",file);
+     Intent send=new Intent(Intent.ACTION_SEND).setType("application/pdf").putExtra(Intent.EXTRA_STREAM,uri)
+      .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+     send.setClipData(android.content.ClipData.newRawUri("Relatório IPIT",uri));
+     if(whatsapp){
+      try{startActivity(new Intent(send).setPackage("com.whatsapp"));return;}
+      catch(android.content.ActivityNotFoundException ignored){}
+      try{startActivity(new Intent(send).setPackage("com.whatsapp.w4b"));return;}
+      catch(android.content.ActivityNotFoundException ignored){}
+      android.widget.Toast.makeText(MainActivity.this,"WhatsApp não disponível. Escolha outro aplicativo.",android.widget.Toast.LENGTH_LONG).show();
+     }
+     startActivity(Intent.createChooser(send,"Compartilhar PDF"));
+    }catch(Exception e){android.widget.Toast.makeText(MainActivity.this,"Não foi possível gerar ou compartilhar o PDF.",android.widget.Toast.LENGTH_LONG).show();}
+   });
+  }
+  @JavascriptInterface public void savePdf(String report){
+   if(report==null || report.length()>200000)return;
+   runOnUiThread(()->{
+    if(pendingPdf!=null){android.widget.Toast.makeText(MainActivity.this,"Conclua ou cancele o salvamento atual.",android.widget.Toast.LENGTH_LONG).show();return;}
+    try{
+     pendingPdf=PdfExporter.create(MainActivity.this,report).getName();
+     Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
+      .setType("application/pdf").putExtra(Intent.EXTRA_TITLE,"IPIT-Professor-relatorio.pdf");
+     startActivityForResult(intent,SAVE_PDF);
+    }catch(Exception e){pendingPdf=null;android.widget.Toast.makeText(MainActivity.this,"Não foi possível abrir o salvamento do PDF.",android.widget.Toast.LENGTH_LONG).show();}
+   });
+  }
   @JavascriptInterface public String configureApi(String endpoint,String model,String key){return teacherApi.configure(endpoint,model,key);}
   @JavascriptInterface public void disconnectApi(){teacherApi.disconnect();}
   @JavascriptInterface public void chatApi(String id,String history,String context){
@@ -103,6 +138,26 @@ public class MainActivity extends Activity {
     startActivity(Intent.createChooser(send,"Compartilhar registro IPIT"));
    });
   }
+ }
+ @Override protected void onSaveInstanceState(Bundle out){
+  super.onSaveInstanceState(out);
+  if(pendingPdf!=null)out.putString("pendingPdf",pendingPdf);
+ }
+ @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
+  super.onActivityResult(requestCode,resultCode,data);
+  if(requestCode!=SAVE_PDF)return;
+  String name=pendingPdf;pendingPdf=null;
+  if(name==null)return;
+  File source=new File(new File(getCacheDir(),"pdf-exports"),name);
+  if(resultCode!=RESULT_OK||data==null||data.getData()==null){source.delete();return;}
+  try(InputStream in=new FileInputStream(source);OutputStream out=getContentResolver().openOutputStream(data.getData())){
+   if(out==null)throw new IOException();
+   byte[] buffer=new byte[8192];int count;
+   while((count=in.read(buffer))!=-1)out.write(buffer,0,count);
+   out.flush();
+   android.widget.Toast.makeText(this,"PDF salvo no local escolhido.",android.widget.Toast.LENGTH_LONG).show();
+  }catch(Exception e){android.widget.Toast.makeText(this,"Não foi possível salvar o PDF.",android.widget.Toast.LENGTH_LONG).show();}
+  finally{source.delete();}
  }
  @Override public void onBackPressed() {
   web.evaluateJavascript("window.ipitBack && window.ipitBack()", value -> {

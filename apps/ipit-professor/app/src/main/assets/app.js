@@ -73,3 +73,17 @@ window.ipitApiResult=(id,text,error)=>{
 if(!bridge?.configureApi){document.querySelector("#api-form").querySelectorAll("input,select,button").forEach(x=>x.disabled=true);}
 document.querySelector("#clear-chat").addEventListener("click",()=>{history=[];epoch++;pending=null;sendButton.disabled=false;});
 document.querySelector("#erase").addEventListener("click",()=>{if(status.textContent==="Todos os registros locais foram excluídos.")resetRemote();});
+
+function pdfReport(){capturePlan();return api.report(state);}
+document.querySelector("#save-pdf").addEventListener("click",()=>{
+ if(bridge?.savePdf){bridge.savePdf(pdfReport());inform("Escolha a pasta e confirme o salvamento do PDF.");}
+ else inform("A exportação de PDF está disponível no aplicativo Android. No navegador, exporte o relatório em texto.");
+});
+document.querySelector("#whatsapp-pdf").addEventListener("click",()=>{
+ if(bridge?.exportPdf){bridge.exportPdf(pdfReport(),true);inform("Escolha o contato no WhatsApp e confirme o envio.");}
+ else inform("O envio de PDF pelo WhatsApp está disponível no aplicativo Android.");
+});
+document.querySelector("#share-pdf").addEventListener("click",()=>{
+ if(bridge?.exportPdf){bridge.exportPdf(pdfReport(),false);inform("Escolha o aplicativo para compartilhar o PDF.");}
+ else inform("O compartilhamento de PDF está disponível no aplicativo Android.");
+});

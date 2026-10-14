@@ -26,7 +26,7 @@ function guide(state,stageId,kind){
  return context+"\n\n"+response+"\n\nPergunta para continuar: "+s.question;
 }
 function report(state){
- return "IPIT Professor — plano e evidências\n"+fields.map(k=>k+": "+state.plan[k]).join("\n")+"\n\n"+stages.map(s=>s.title+" — "+(state.records[s.id].done?"concluído":"em andamento")+"\n"+state.records[s.id].note).join("\n\n")+"\n\nAvaliação\n"+state.evaluations.map(x=>x.code+"\n"+criteria.map((c,i)=>c+": "+x.levels[i]).join("\n")+"\nFeedback: "+x.note).join("\n\n")+"\n\nAutora da metodologia: Sandra Maria Pereira. Registros requerem revisão docente.";
+ return "IPIT Professor — plano e evidências\n"+fields.map(k=>({objective:"Objetivo curricular",subject:"Componente curricular",group:"Código da turma",challenge:"Desafio",resources:"Recursos",duration:"Tempo (minutos)",supports:"Apoios de participação",technology:"Decisão tecnológica",aiUse:"Uso de IA e verificação"}[k])+": "+state.plan[k]).join("\n")+"\n\n"+stages.map(s=>s.title.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").trim()+" — "+(state.records[s.id].done?"concluído":"em andamento")+"\n"+state.records[s.id].note).join("\n\n")+"\n\nAvaliação\n"+state.evaluations.map(x=>x.code+"\n"+criteria.map((c,i)=>c+": "+x.levels[i]).join("\n")+"\nFeedback: "+x.note).join("\n\n")+"\n\nAutora da metodologia: Sandra Maria Pereira. Registros requerem revisão docente.";
 }
 
 function classify(message){
